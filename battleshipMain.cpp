@@ -1,28 +1,47 @@
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 #include "classes.h"
-
+#include "rtClasses.h"
+#include "classesAI.h"
 using namespace std;
 
 int main()
 {
-	table table1, table2;
-	ship ship1(5), ship2(4), ship3(3), ship4(3), ship5(2);
-	ship AIship1(5), AIship2(4), AIship3(3), AIship4(3), AIship5(2);
+	srand(time(0));
+	userTable table1;
+	tableAI table2;
+	userShip*  ships[5]{ new userShip(5), new userShip(4), new userShip(3),  new userShip(3), new userShip(2)};
+	ShipAI*  AIships[5]={ new ShipAI(5), new ShipAI(4), new ShipAI(3),  new ShipAI(3), new ShipAI(2)};
 	table1.print();
+
+	//inserimento navi utente
+	for(int a=0; a<5; a++)
+	{
+		ships[a]->insertShip(a+1, table1);
+		system("cls");
+		table1.print();
+	}
+	//inserimento navi AI
+	for(int a=0; a<5; a++)
+	{
+		AIships[a]->insertShip(a+1, table2);
+	}
 	table2.print();
-	ship1.insertShip(1, table1);
-	system("cls");
-	table1.print();
-	ship2.insertShip(2, table1);
-	system("cls");
-	table1.print();
-	ship3.insertShip(3, table1);
-	system("cls");
-	table1.print();
-	ship4.insertShip(4, table1);
-	system("cls");
-	table1.print();
-	ship5.insertShip(5, table1);
-	system("cls");
-	table1.print();
-}
+	userCannon cannon1;
+	cannonAI cannon2;
+	while(1)
+	{
+		bool affondato=false;
+		system("cls");
+		table1.print();
+		table2.print();
+		cannon1.interfaccia(table2, *AIships);
+		system("pause");
+		//cannon2.interfaccia(table1, *ships);
+	}
+	delete ships;
+	delete AIships;
+ 	system("pause");
+	}
+

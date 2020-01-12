@@ -1,4 +1,4 @@
-# BattleShip (almost finished)
+# BattleShip (not finished)
 Simple yet enjoyable windows battleship game to play on the cmd console. 
 Basic ascii interface using windows.h library for colors.
 

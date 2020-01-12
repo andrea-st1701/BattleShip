@@ -11,45 +11,49 @@ void ShipAI::insertShip(int i, tableAI &t)
 {
 	
 		
- 		int a=1, x1=0, y1=0;
+ 		int a=1;
+		point c;
  		bool  b=true;
- 		x1=rand()%8+1;
- 		y1=rand()%8+1;
- 		b=controlValue(x1, y1, t, b);
+ 		c.x=rand()%8+1;
+ 		c.y=rand()%8+1;
+ 		b=controlValue(c, t, b);
  		if(b==false)
  		{
  			insertShip(i, t);//!!!
 		 }
 		 else
 		 {
-		 	position[0][0]=x1;
-		 	position[0][1]=y1;
+		 	
 		a=rand()%2+1;
  		switch (a)
  		{
  			case 1:
- 			for(int f=1; f<length; f++)
+ 			for(int f=0; f<length-1; f++)
  			{
- 				b=controlValue(x1, y1+f, t, b);
+ 				c.y+=1;
+ 				b=controlValue(c, t, b);
  		
 			 }
-			 		if(b==false)
- 				{
-					insertShip(i, t);
+			if(b==false)
+ 			{
+				insertShip(i, t);
+			}
+			 else
+			 {
+			 	c.y-=length;
+			 	for(int g=0; g<length; g++)
+			 	{
+			 		c.y+=1;
+			 		position[g].x=c.x;
+			 		position[g].y=c.y;
 				 }
-				 else
-				 {
-				 	for(int g=0; g<length; g++)
-				 	{
-				 		position[g][0]=x1;
-				 		position[g][1]=y1+g;
-					 }
-				 }
+			 }
  				break;
  			case 2:
- 			for(int f=1; f<length; f++)
+ 			for(int f=0; f<length-1; f++)
  			{
- 				b=controlValue(x1+f, y1, t, b);
+ 				c.x+=1;
+ 				b=controlValue(c, t, b);
 			 }
 			 	if(b==false)
  				{
@@ -57,10 +61,12 @@ void ShipAI::insertShip(int i, tableAI &t)
 				 }
 				 else
 				 {
+				 	c.x-=length;
 				 	for(int g=0; g<length; g++)
 				 	{
-				 		position[g][0]=x1+g;
-				 		position[g][1]=y1;
+				 		c.x+=1;
+				 		position[g].x=c.x;
+				 		position[g].y=c.y;
 					 }
 				 }
  				break;
@@ -70,8 +76,8 @@ void ShipAI::insertShip(int i, tableAI &t)
  				
  			for(int z=0; z<length; z++)
  		{
- 			t.setMap(1, position[z][0], position[z][1]);
- 			t.setId(i-1, position[z][0], position[z][1]);
+ 			t.setMap(1, position[z]);
+ 			t.setId(i, position[z]);
  						
 		 }
 	 }
@@ -91,13 +97,17 @@ int tableAI::print()
 			 {
 			 	cout<<b;
 			 }
+			 if(map[a][b]==1)
+			 {
+			 	cout<<"#";
+			 }
 			 if(map[a][b]==2)
 			 {
 			 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_INTENSITY);
 			 	cout<<"X";
 			 	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_INTENSITY);
 			 }
-				 if(map[a][b]==3||map[a][b]==1)
+				 if(map[a][b]==3 /*||map[a][b]==1*/)
 			 {
 			 	SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE|FOREGROUND_INTENSITY);
 			 	cout<<"~~";
@@ -118,10 +128,20 @@ int tableAI::print()
 	 	cout<<"_";
 	 }
 	 cout<<"\n\n";
+	 	for(int a=0; a<9; a++)
+ 	{
+ 		for(int b=0; b<9; b++)
+ 		{
+ 			//cout<<map[a][b]<<"\t";
+		 }
+		 cout<<"\n\n";
+	 }
  }
+ //non va
 void cannonAI::interfaccia(userTable &t, userShip *s)
 {
-	int xf=0, yf=0, a;
+	int  a;
+	point f;
 	a=getHit();
 	if(a==-1)
 	{
@@ -130,47 +150,48 @@ void cannonAI::interfaccia(userTable &t, userShip *s)
 	}
 	if(a<=0)
 	{
-		xf=rand()%8+1;
-		yf=rand()%8+1;
-		setLast(xf, 0);
-		setLast(yf, 1);
+		f.x=rand()%8+1;
+		f.y=rand()%8+1;
+		setLast(f.x, 0);
+		setLast(f.y, 1);
 	}
 	begin:
 	if(a>0&&RLhoriz[1]) //se la nave è orizzontale
 	{
-		int x, y;
-		x=getLast(0);
-		y=getLast(1);
+		point c;
+		c.x=getLast(0);
+		c.y=getLast(1);
 		if(RLhoriz[0]) //se la nave è verso destra
 		{
-			xf=x+1;
-			yf=y;
+			f.x=c.x+1;
+			f.y=c.y;
 		}
 		if(!RLhoriz[0])//se la nave è verso sinistra
 		{
-			xf=x-1;
-			yf=y;
+			f.x=c.x-1;
+			f.y=c.y;
 		}
-		int hit= t.getMap(xf, yf);
+		int hit= t.getMap(f);
 		if(hit==1)
 		{
 			upHit(1);
-			setLast(xf, 0);
-			setLast(yf, 1);
+			setLast(f.x, 0);
+			setLast(f.y, 1);
 		}
 		else
 		{
-			if(RLhoriz[1])//se prima si è controllata la possibilità orizzontale destra o verticale destra
+			if(RLhoriz[0])//se prima si è controllata la possibilità orizzontale destra o verticale destra
 			{
 				!RLhoriz[0]; //si cambia in orizzontale/verticale sinistra=verso il basso
 				goto begin;
 			}
 			if(RLhoriz[1]&&!RLhoriz[0])//possibilità orizzontale sinistra
 			{
-				!RLhoriz[0];//vericale
-				RLhoriz[1];//destra
+				RLhoriz[1];//vericale
+				RLhoriz[0];//destra
+				goto begin;
 			}
 		}
 	}
-	fire(xf, yf, t, s);
+	fire(f, t, s);
 }

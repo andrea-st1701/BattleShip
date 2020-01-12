@@ -23,7 +23,7 @@ class ShipAI : public ship
 class userCannon : public cannon
 {
 	public:
-		void interfaccia(tableAI &t, ShipAI *s);
+		void interfaccia(tableAI &t, ShipAI* s);
 	protected:
 };
 

@@ -11,10 +11,6 @@ class userTable : public table
 		
 		userTable():table(){};
 		~userTable(){};
-		int getMap(int x, int y){return map[y][x];};
-		void setMap(int value, int x, int y){map[y][x]=value;};
-		int getId(int x, int y){return id[y][x];};
-		void setId(int value, int x, int y){id[y][x]=value;};
 		int print();
 };
 class userShip: public ship

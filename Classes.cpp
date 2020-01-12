@@ -89,43 +89,51 @@ int userTable::print()
  
  ship::ship(int l)
  {
- 	l>0? l:3;
- 	length=l;
+ //	l=l>0? l:3;
+	length=l;
  	for(int i=0; i<5; i++)
  	{
- 		position[i][0]=position[i][1]=0;
+ 		position[i].x=0;
+		position[i].y=0;
 	 }
  
  }
  void userShip::insertShip(int i, userTable &t)
  {
  		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
- 		int a=1, x1=0, y1=0;
+ 		int a=1; 
+		point c={0};
  		bool  b=true;
- 		char z;
+ 		char z=0;
  		do{
  			cout<<"inserisci le cordinate della prua della nave "<<i<<" \n y(lettera): ";
  			cin>>z;
- 			y1=(int)z-96;
- 			if(y1>8||y1<=0)
+ 			c.y=(int)z-96;
+ 			if(c.y>8||c.y<=0)
  			{
  				SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_INTENSITY);
  				cout<<"errore, riprova...\n";
  				SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_INTENSITY);
+ 				
 			 }
-		 }while(y1>8||y1<=0);
+		 }while(c.y>8||c.y<=0);
  		do{
+ 			do{
  			cout<<"x: ";
- 			cin>>x1;
- 			if(x1>8||x1<=0)
+ 			cin>>c.x;
+			 }while(typeid(c.x).name()!=int);
+ 			c.x=(int)c.x;
+ 			cout<<c.x;
+ 			system("pause");
+ 			if(c.x>8||c.x<=0)
  			{
  				SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_INTENSITY);
  				cout<<"errore, riprova...\n";
  				SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_INTENSITY);
 			 }
-		 }while(x1>8||x1<=0);
+		 }while(c.x>8||c.x<=0);
  	
- 		b=controlValue(x1, y1, t, b);
+ 		b=controlValue(c, t, b);
  		if(b==false)
  		{
  			SetConsoleTextAttribute(hConsole, FOREGROUND_RED|FOREGROUND_INTENSITY);
@@ -135,16 +143,16 @@ int userTable::print()
 		 }
 		 else
 		 {
-		 	position[0][0]=x1;
-		 	position[0][1]=y1;
+		 	
 		cout<<"specifica il verso della nave:\n 1=verticale\n2=orizzontale\n ";
 		cin>>a;
  		switch (a)
  		{
  			case 1:
- 			for(int f=1; f<length; f++)
+ 			for(int f=0; f<length-1; f++)
  			{
- 				b=controlValue(x1, y1+f, t, b);
+ 				c.y+=1;
+ 				b=controlValue(c, t, b);
  		
 			 }
 			 		if(b==false)
@@ -156,17 +164,20 @@ int userTable::print()
 				 }
 				 else
 				 {
+				 	c.y-=length;
 				 	for(int g=0; g<length; g++)
 				 	{
-				 		position[g][0]=x1;
-				 		position[g][1]=y1+g;
+				 		c.y+=1;
+				 		position[g].x=c.x;
+				 		position[g].y=c.y;
 					 }
 				 }
  				break;
  			case 2:
- 			for(int f=1; f<length; f++)
+ 			for(int f=0; f<length-1; f++)
  			{
- 				b=controlValue(x1+f, y1, t, b);
+ 				c.x+=1;
+ 				b=controlValue(c, t, b);
 			 }
 			 	if(b==false)
  				{
@@ -177,10 +188,12 @@ int userTable::print()
 				 }
 				 else
 				 {
+				 	c.x-=length;
 				 	for(int g=0; g<length; g++)
 				 	{
-				 		position[g][0]=x1+g;
-				 		position[g][1]=y1;
+				 		c.x+=1;
+				 		position[g].x=c.x;
+				 		position[g].y=c.y;
 					 }
 				 }
  				break;
@@ -195,16 +208,16 @@ int userTable::print()
  				
  		for(int z=0; z<length; z++)
  		{
- 			t.setMap(1, position[z][0], position[z][1]);
- 			t.setId(i, position[z][0], position[z][1]);
+ 			t.setMap(1, position[z]);
+ 			t.setId(i, position[z]);
  						
 		 }
 	 }
  }
  
- bool ship::controlValue(int x, int y, table &t, bool &b)
+ bool ship::controlValue(point c, table &t, bool &b)
  {
- 	int map=t.getMap(x, y);
+ 	int map=t.getMap(c);
  	if(map!=3)
  	{
  		b=false;
@@ -217,17 +230,18 @@ int userTable::print()
  	int map=0;
  	for(int i=0; i<length; i++)
  	{
- 		map=t.getMap(position[i][0],position[i][1]);
+ 		cout<<length<<"\n";
+ 		cout<<position[i].x<<"\t"<<position[i].y<<"\n";
+ 		map=t.getMap(position[i]);
  		if(map==1)
  		{
  			affondato=false;
- 			break;
+ 			//break;
 		 }
 	 }
 	 if(affondato==true)
 	 {
 	 	cout<<"e AFFONDATA!!! ";
-	 	delete this;
 	 }
  }
 
@@ -243,39 +257,36 @@ cannon::~cannon()
  void userCannon::interfaccia(tableAI &t, ShipAI *s)
 {
 	char z;
-	int xf=0, yf=0;
+	point f;
 	do
 	{
 		cout<<"scrivi le coordinate da colpire\n y(lettera): ";
 		cin>>z;
-		yf=(int)z-96;
-	}while(yf<0||yf>8);
+		f.y=(int)z-96;
+	}while(f.y<1||f.y>8);
 	do
 	{
 		cout<<"x: ";
-		cin>>xf;
-	}while(xf<0||xf>8);
-	fire(xf, yf, t, s);
+		cin>>f.x;
+	}while(f.x<1||f.x>8);
+	fire(f, t, s);
 	
 }
-void cannon::fire(int x, int y, table &t, ship *s)
+void cannon::fire(point f, table &t, ship *s)
 {
-	int a=t.getMap(x, y);
+	int a=t.getMap(f);
 	int b=404;
 	if(a==1)
 	{
-		b=t.getId(x, y);
-		t.setMap(2, x, y);
+		b=t.getId(f);
+		t.setMap(2, f);
 		cout<<"nave "<<b<<" colpita! ";
+		s[b].stateControl(t);
 	}
-	if(a==3)
+	else if(a==3)
 	{
 		cout<<"ACQUA\n";
-		t.setMap(4, x, y);
-	}
-	if(b!=404)
-	{
-		s[b].stateControl(t);
+		t.setMap(4, f);
 	}
 }
 

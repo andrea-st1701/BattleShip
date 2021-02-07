@@ -7,3 +7,6 @@ Developer: Andrea Stefani
 Studying at: liceo M. Fanti, Italy, Carpi (MO) 
 
 I'm a beginner, please take some time to review my code and let me know if there is anything I can do to improve it, I appreciate any piece of advice. Thanks.
+
+NEWS!!
+I'm learning to use sfml and may use it for a new and better version of this game, stay tuned.
